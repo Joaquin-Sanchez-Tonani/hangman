@@ -58,28 +58,31 @@ function App() {
     }
 
     const checkLetter = (e) => {
-        // Verifica si la letra es un espacio en blanco
         if (e === ' ') {
             return;
         }
     
         if (word.includes(e)) {
-            setGuessedLetters([...guessedLetters, e]);
+            setGuessedLetters((prev) => [...prev, e]);
         } else {
-            setAttemptsLeft(attemptsLeft - 1);
-            setUnGuessedLetters([...unguessedLetters, e]);
+            setUnGuessedLetters((prev) => [...prev, e]);
+            setAttemptsLeft((prev) => prev - 1);
         }
+    };
     
-        const lettersToGuess = word.filter((letter) => letter !== ' ');
-        const allLettersGuessed = lettersToGuess.every((letter) => guessedLetters.includes(letter));
+    useEffect(() => {
+        if (word.length > 0) {
+            const lettersToGuess = word.filter((letter) => letter !== ' ');
+            const allLettersGuessed = lettersToGuess.every((letter) => guessedLetters.includes(letter));
     
-        if (allLettersGuessed) {
-            setGameResult('win');
-        } else if (attemptsLeft === 1) {
-            setGameResult('lose');
+            if (allLettersGuessed) {
+                setGameResult('win');
+            } else if (attemptsLeft <= 0) {
+                setGameResult('lose');
+            }
         }
-    }
-
+    }, [guessedLetters, attemptsLeft, word]);
+    
     useEffect(() => {
         if (gameResult === 'win') {
             alert('Congratulations! You won!');
@@ -87,6 +90,7 @@ function App() {
             alert('Sorry, you lost.');
         }
     }, [gameResult]);
+    
 
 
     return (
